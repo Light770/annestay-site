@@ -8,7 +8,8 @@ import FeatureCardsSection from '../components/blocks/features/FeatureCards.astr
 import Testimonial from '../components/blocks/testimonials/BasicDark.astro'
 import HighlightBlocks from '../components/blocks/highlights/HightlightRows.astro'
 import CTA from '../components/blocks/CTA/BasicDark.astro'
-
+import HomeAnimation from '../components/blocks/hero/HomeAnimation.astro'
+import TimelineEvent from '../components/blocks/timeline/AnomalyTimeline.astro'
 // Data - Fully from Sanity
 import { getHomePage, getTestimonials, getAllFeatureCards } from '../lib/sanity'
 import type { HomePage, HighlightBlock } from '../lib/sanity/types'
@@ -74,7 +75,8 @@ const sortedHighlightBlocks: HighlightBlock[] = highlightBlocks.sort((a: Highlig
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<Hero data={heroData} />
+	<!-- <Hero data={heroData} /> -->
+	<HomeAnimation/>
 	<FeatureCardsSection data={featureCardData} header={featureCardHeader} />
 	<Testimonial
 		blockquote={featuredTestimonial?.quote}
@@ -83,6 +85,7 @@ const sortedHighlightBlocks: HighlightBlock[] = highlightBlocks.sort((a: Highlig
 		bg={finalTestimonialBackground}
 		bgPosition={testimonialBackgroundPosition}
 	/>
+	<TimelineEvent/>
 	<HighlightBlocks data={sortedHighlightBlocks} />
 	<CTA data={ctaData} />
 </Layout>

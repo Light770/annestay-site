@@ -5,7 +5,7 @@ import imageUrlBuilder from '@sanity/image-url'
 const sanityClient = createClient({
   projectId: import.meta.env.SANITY_PROJECT_ID || 'hg0e82hx',
   dataset: import.meta.env.SANITY_DATASET || 'private-config',
-  token: import.meta.env.SANITY_TOKEN, // Required for private datasets
+  // token: import.meta.env.SANITY_TOKEN, // Required for private datasets
   apiVersion: '2024-01-01', // Use current date
   useCdn: false, // Set to false for private datasets with tokens
 })

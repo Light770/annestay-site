@@ -1,0 +1,893 @@
+---
+// AnomalyTimeline.astro
+export interface TimelineEvent {
+  year: string;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface Props {
+  events?: TimelineEvent[];
+  title?: string;
+}
+
+const defaultEvents: TimelineEvent[] = [
+  {
+    year: "2018",
+    title: "The Vision",
+    description: "Two quantum physicists met at a conference and shared a dream of democratizing quantum computing.",
+    icon: "💡"
+  },
+  {
+    year: "2019",
+    title: "First Prototype",
+    description: "Built our first 5-qubit quantum processor in a university lab with recycled equipment.",
+    icon: "🔬"
+  },
+  {
+    year: "2020",
+    title: "The Genesis",
+    description: "Officially founded the company and secured initial funding from angel investors.",
+    icon: "🚀"
+  },
+  {
+    year: "2021 Q1",
+    title: "Team Assembly",
+    description: "Recruited top talent from MIT, Stanford, and CERN to join our mission.",
+    icon: "👥"
+  },
+  {
+    year: "2021 Q3",
+    title: "First Breakthrough",
+    description: "Successfully demonstrated 100-qubit quantum supremacy in cloud environment.",
+    icon: "⚡"
+  },
+  {
+    year: "2022 Q1",
+    title: "Series A Funding",
+    description: "Raised $50M in Series A funding led by prominent Silicon Valley VCs.",
+    icon: "💰"
+  },
+  {
+    year: "2022 Q2",
+    title: "Global Expansion",
+    description: "Launched quantum computing centers in 15 countries worldwide.",
+    icon: "🌍"
+  },
+  {
+    year: "2022 Q4",
+    title: "Research Milestone",
+    description: "Published groundbreaking paper on error correction, cited 1000+ times.",
+    icon: "📚"
+  },
+  {
+    year: "2023 Q1",
+    title: "Enterprise Launch",
+    description: "Released enterprise-grade quantum computing platform for businesses.",
+    icon: "🏢"
+  },
+  {
+    year: "2023 Q2",
+    title: "Industry Revolution",
+    description: "Partnered with Fortune 500 companies to solve real-world optimization problems.",
+    icon: "💎"
+  },
+  {
+    year: "2023 Q3",
+    title: "Educational Initiative",
+    description: "Launched free quantum computing courses, reaching 100,000+ students globally.",
+    icon: "🎓"
+  },
+  {
+    year: "2023 Q4",
+    title: "Hardware Innovation",
+    description: "Unveiled proprietary quantum chip architecture with 99.9% fidelity.",
+    icon: "🖥️"
+  },
+  {
+    year: "2024 Q1",
+    title: "Quantum Cloud",
+    description: "Released the first publicly accessible quantum cloud platform with pay-per-use model.",
+    icon: "☁️"
+  },
+  {
+    year: "2024 Q2",
+    title: "AI Integration",
+    description: "Merged quantum computing with AI to create hybrid quantum-classical algorithms.",
+    icon: "🤖"
+  },
+  {
+    year: "2024 Q3",
+    title: "Medical Breakthrough",
+    description: "Used quantum simulations to discover new drug compounds for rare diseases.",
+    icon: "💊"
+  },
+  {
+    year: "2024 Q4",
+    title: "Sustainability Impact",
+    description: "Optimized global supply chains, reducing carbon emissions by 15% for partners.",
+    icon: "🌱"
+  },
+  {
+    year: "2025 Q1",
+    title: "1000-Qubit System",
+    description: "Achieved the milestone of 1000 logical qubits with full error correction.",
+    icon: "🎯"
+  },
+  {
+    year: "2025 Q2",
+    title: "The Future",
+    description: "Working towards room-temperature quantum computers and universal quantum advantage.",
+    icon: "🔮"
+  }
+];
+
+const { 
+  events = defaultEvents,
+  title = "Our Quantum Journey"
+} = Astro.props;
+---
+
+<div class="anomaly-timeline-container">
+  <!-- Space Anomaly Background -->
+  <canvas id="timeline-anomaly-canvas"></canvas>
+  
+  <!-- Timeline Header -->
+  <div class="timeline-header">
+    <h2 class="timeline-title">{title}</h2>
+    <div class="timeline-subtitle">Scroll to explore our journey through time</div>
+    <div class="scroll-hint">
+      <div class="scroll-hint-text">Scroll to begin</div>
+      <div class="scroll-hint-arrow">↓</div>
+    </div>
+  </div>
+  
+  <!-- Timeline Content -->
+  <div class="timeline-content">
+    <div class="timeline-line"></div>
+    
+    {events.map((event, index) => (
+      <div class="timeline-event" data-index={index}>
+        <div class="timeline-event-marker">
+          <div class="marker-glow"></div>
+          <div class="marker-core">{event.icon || "⚪"}</div>
+        </div>
+        
+        <div class="timeline-event-content">
+          <div class="event-year">{event.year}</div>
+          <h3 class="event-title">{event.title}</h3>
+          <p class="event-description">{event.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  <!-- Progress Indicator -->
+  <div class="timeline-progress">
+    <div class="progress-bar"></div>
+    <div class="progress-text">0%</div>
+  </div>
+</div>
+
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  .anomaly-timeline-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #000;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  #timeline-anomaly-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .timeline-header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .timeline-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, #ffffff 0%, #93bbfc 50%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 1s ease-out;
+    letter-spacing: -0.02em;
+  }
+  
+  .timeline-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.6);
+    animation: fadeInUp 1s ease-out 0.2s both;
+    margin-bottom: 4rem;
+  }
+  
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    animation: fadeInUp 1s ease-out 0.4s both;
+  }
+  
+  .scroll-hint-text {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .scroll-hint-arrow {
+    font-size: 1.5rem;
+    color: rgba(59, 130, 246, 0.6);
+    animation: bounce 2s ease-in-out infinite;
+  }
+  
+  .timeline-content {
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem 12rem;
+  }
+  
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(59, 130, 246, 0.3) 10%,
+      rgba(59, 130, 246, 0.5) 50%,
+      rgba(59, 130, 246, 0.3) 90%,
+      transparent 100%
+    );
+    transform: translateX(-50%);
+  }
+  
+  .timeline-event {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10rem;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .timeline-event.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .timeline-event:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+  
+  .timeline-event:nth-child(even) .timeline-event-content {
+    text-align: right;
+    padding-right: 4rem;
+    padding-left: 0;
+  }
+  
+  .timeline-event:nth-child(odd) .timeline-event-content {
+    padding-left: 4rem;
+  }
+  
+  .timeline-event-marker {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+  
+  .marker-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .marker-core {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .timeline-event:hover .marker-core {
+    transform: scale(1.1) rotate(10deg);
+  }
+  
+  .timeline-event-content {
+    flex: 1;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+  }
+  
+  .timeline-event:hover .timeline-event-content {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: scale(1.02);
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+  }
+  
+  .event-year {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+  
+  .timeline-event:hover .event-year {
+    color: #93bbfc;
+    text-shadow: 0 0 20px rgba(147, 187, 252, 0.5);
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+  }
+  
+  .event-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+  }
+  
+  .event-description {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .timeline-progress {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .progress-bar {
+    width: 100px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--progress, 0%);
+    background: linear-gradient(90deg, #3b82f6 0%, #93bbfc 100%);
+    transition: width 0.3s ease;
+  }
+  
+  .progress-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #93bbfc;
+    min-width: 3ch;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1.5);
+      opacity: 0.2;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 2rem;
+    }
+    
+    .timeline-event {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      padding-left: 4rem;
+    }
+    
+    .timeline-event-marker {
+      left: 2rem;
+    }
+    
+    .timeline-event:nth-child(even) .timeline-event-content,
+    .timeline-event:nth-child(odd) .timeline-event-content {
+      text-align: left;
+      padding: 2rem 0 0 0;
+    }
+    
+    .timeline-progress {
+      top: auto;
+      bottom: 2rem;
+      right: 50%;
+      transform: translateX(50%);
+    }
+  }
+</style>
+
+<script>
+  // Scroll-driven anomaly shader
+  const shaderSource = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+uniform float scrollProgress;
+uniform float eventProgress;
+uniform vec2 eventPositions[20]; // Support up to 20 events
+uniform int totalEvents;
+uniform int activeEvent;
+
+#define T time
+#define R resolution
+#define S smoothstep
+#define rot(a) mat2(cos((a)-vec4(0,11,33,0)))
+
+// Color functions
+vec3 bluehue(float a) {
+  return .3 + .3 * sin(6.3 * a + vec3(0, 1, 2));
+}
+
+// Complex multiplication for swirls
+vec2 cmul(vec2 a, vec2 b) {
+  return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+}
+
+// Modified swirls function that responds to scroll
+float swirls(vec3 p, float k, float scroll) {
+  vec3 c = p;
+  float d = 0.2;
+  
+  // Adjust intensity based on scroll
+  float intensity = mix(1.0, 2.5, scroll);
+  
+  for (float i = 0.; i < 5.; i++) {
+    p = .7 * abs(p) / dot(p, p) - .7;
+    p.z -= .0618 * (1. + i) + scroll * 0.1;
+    p.yz = cmul(p.yz, p.yz);
+    p = p.zxy;
+    
+    // Add rotation based on scroll
+    p.xy *= rot(scroll * 3.14159 * 0.5);
+    
+    d += exp(-9. * abs(dot(p, c))) * k / (5. - i) * intensity;
+  }
+  return d;
+}
+
+// Event influence function
+float eventInfluence(vec2 uv, vec2 eventPos, float radius) {
+  float dist = length(uv - eventPos);
+  return S(radius, 0., dist);
+}
+
+// Main marching function
+vec3 march(vec3 p, vec3 rd, float scroll) {
+  vec3 col = vec3(0);
+  float t = 0., d = 0.2, c = 0.;
+  
+  // Increase march steps based on scroll for more detail
+  float steps = mix(40., 80., scroll);
+  
+  for (float i = 0.; i < 80.; i++) {
+    if (i >= steps) break;
+    
+    t += d * exp(-1.4 * c);
+    c = swirls(p + rd * t, 2.1 / t, scroll);
+    
+    // Color evolution based on scroll
+    vec3 baseHue = bluehue(1.57 * exp(-log(dot(p, p)) * .9) * (i + 1.) * c + .25);
+    
+    // Shift colors as we progress
+    vec3 colorShift = vec3(
+      mix(0.6, 0.8, scroll),
+      mix(0.8, 0.6, scroll),
+      mix(1.2, 1.4, scroll)
+    );
+    
+    vec3 hue = baseHue * colorShift;
+    col += 3e-2 * c * hue;
+  }
+  
+  return col;
+}
+
+void main() {
+  vec2 uv = (gl_FragCoord.xy - .5 * R) / min(R.x, R.y);
+  vec3 p = vec3(0, 0, -4);
+  vec3 rd = normalize(vec3(uv, 1));
+  
+  // Camera movement based on scroll
+  float camRotY = -.84 + scrollProgress * 6.28318 - sin(T * .1) * .01;
+  float camRotX = .42 + scrollProgress * 3.14159 + T * .09;
+  
+  p.yz *= rot(camRotY);
+  p.xz *= rot(camRotX);
+  rd.yz *= rot(camRotY);
+  rd.xz *= rot(camRotX);
+  
+  // Get base anomaly color
+  vec3 col = march(p, rd, scrollProgress);
+  
+  // Add event influences
+  float totalInfluence = 0.;
+  for (int i = 0; i < 20; i++) {
+    if (i >= totalEvents) break;
+    if (i >= activeEvent - 1 && i <= activeEvent + 1) {
+      vec2 eventUV = eventPositions[i] * 2. - 1.;
+      float influence = eventInfluence(uv, eventUV, 0.5);
+      
+      // Create ripple effect from active events
+      float ripple = sin(length(uv - eventUV) * 20. - T * 15.) * 0.5 + 0.5;
+      influence *= ripple;
+      
+      // Add bright spots at event locations
+      if (i == activeEvent) {
+        col += vec3(0.2, 0.4, 0.8) * influence * eventProgress;
+      }
+      
+      totalInfluence += influence * 0.05;
+    }
+  }
+  
+  // Add overall brightness based on event proximity
+  col += col * totalInfluence;
+  
+  // Dynamic vignette
+  float vignette = 1. - dot(uv, uv) * mix(0.25, 0.5, scrollProgress);
+  col *= vignette;
+  
+  // Fog effect that changes with scroll
+  vec3 fogColor = mix(
+    vec3(.03, .05, .02),
+    vec3(.05, .058, .15),
+    scrollProgress * 0.5 + sin(T * 0.05) * 0.05
+  );
+  float depth = length(uv) * 2.;
+  col = mix(col, fogColor, S(0., 2., depth) * .3);
+  
+  // Final color adjustments
+  col = pow(col, vec3(1.1, 1.0, .85));
+  col = col * vec3(.7, .8, 1.0);
+  col = min(col, vec3(.85, .85, .90));
+  
+  // Ensure blues are prominent
+  col.b = max(col.b, (col.r + col.g) * 0.25);
+//   col.g = max(col.b, (col.r + col.g) * 0.25);
+  
+  // Fade in
+  float fadeIn = S(0., 1., min((T - .5) * .5, 1.));
+  col *= fadeIn;
+  
+  O = vec4(col, 1);
+}`;
+
+  const vertexSource = `#version 300 es
+in vec2 position;
+void main(){gl_Position=vec4(position,0,1);}`;
+
+  // Timeline Anomaly Renderer
+  class TimelineAnomalyRenderer {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.gl = canvas.getContext('webgl2', {
+        alpha: false,
+        antialias: false,
+        depth: false,
+        stencil: false,
+        preserveDrawingBuffer: false
+      });
+      
+      if (!this.gl) {
+        console.error('WebGL2 not supported');
+        return;
+      }
+      
+      this.scrollProgress = 0;
+      this.eventProgress = 0;
+      this.activeEvent = 0;
+      this.eventPositions = new Float32Array(40); // 20 events * 2 coordinates
+      this.totalEvents = 0;
+      this.lastTime = 0;
+      
+      this.init();
+    }
+    
+    createShader(type, source) {
+      const shader = this.gl.createShader(type);
+      this.gl.shaderSource(shader, source);
+      this.gl.compileShader(shader);
+      
+      if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+        console.error('Shader compile error:', this.gl.getShaderInfoLog(shader));
+        return null;
+      }
+      
+      return shader;
+    }
+    
+    init() {
+      const gl = this.gl;
+      
+      // Create shaders
+      const vertexShader = this.createShader(gl.VERTEX_SHADER, vertexSource);
+      const fragmentShader = this.createShader(gl.FRAGMENT_SHADER, shaderSource);
+      
+      if (!vertexShader || !fragmentShader) return;
+      
+      // Create program
+      this.program = gl.createProgram();
+      gl.attachShader(this.program, vertexShader);
+      gl.attachShader(this.program, fragmentShader);
+      gl.linkProgram(this.program);
+      
+      if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(this.program));
+        return;
+      }
+      
+      // Create buffer
+      const vertices = new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+      
+      // Set up attributes
+      const position = gl.getAttribLocation(this.program, 'position');
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+      
+      // Cache uniform locations
+      this.uniforms = {
+        resolution: gl.getUniformLocation(this.program, 'resolution'),
+        time: gl.getUniformLocation(this.program, 'time'),
+        scrollProgress: gl.getUniformLocation(this.program, 'scrollProgress'),
+        eventProgress: gl.getUniformLocation(this.program, 'eventProgress'),
+        eventPositions: gl.getUniformLocation(this.program, 'eventPositions'),
+        activeEvent: gl.getUniformLocation(this.program, 'activeEvent'),
+        totalEvents: gl.getUniformLocation(this.program, 'totalEvents')
+      };
+      
+      // Use program
+      gl.useProgram(this.program);
+      
+      this.resize();
+      this.render(0);
+    }
+    
+    updateScroll(progress) {
+      this.scrollProgress = progress;
+    }
+    
+    updateActiveEvent(index, progress) {
+      this.activeEvent = index;
+      this.eventProgress = progress;
+    }
+    
+    updateEventPositions(positions) {
+      this.eventPositions = positions;
+    }
+    
+    setTotalEvents(count) {
+      this.totalEvents = count;
+    }
+    
+    resize() {
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+    
+    render = (time) => {
+      const gl = this.gl;
+      const deltaTime = time - this.lastTime;
+      this.lastTime = time;
+      
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
+      gl.uniform1f(this.uniforms.time, time * 0.001);
+      gl.uniform1f(this.uniforms.scrollProgress, this.scrollProgress);
+      gl.uniform1f(this.uniforms.eventProgress, this.eventProgress);
+      gl.uniform2fv(this.uniforms.eventPositions, this.eventPositions);
+      gl.uniform1i(this.uniforms.activeEvent, this.activeEvent);
+      gl.uniform1i(this.uniforms.totalEvents, this.totalEvents);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      
+      requestAnimationFrame(this.render);
+    };
+  }
+
+  // Initialize on DOM load
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('timeline-anomaly-canvas');
+    const container = document.querySelector('.anomaly-timeline-container');
+    const events = document.querySelectorAll('.timeline-event');
+    const progressBar = document.querySelector('.progress-bar');
+    const progressText = document.querySelector('.progress-text');
+    const header = document.querySelector('.timeline-header');
+    
+    if (!canvas || !container) return;
+    
+    const renderer = new TimelineAnomalyRenderer(canvas);
+    
+    // Calculate event positions
+    const updateEventPositions = () => {
+      const positions = new Float32Array(40); // Support up to 20 events
+      const eventCount = Math.min(events.length, 20);
+      
+      events.forEach((event, index) => {
+        if (index >= 20) return; // Limit to 20 events
+        
+        const rect = event.getBoundingClientRect();
+        const marker = event.querySelector('.timeline-event-marker');
+        const markerRect = marker.getBoundingClientRect();
+        
+        positions[index * 2] = markerRect.left / window.innerWidth + markerRect.width / 2 / window.innerWidth;
+        positions[index * 2 + 1] = markerRect.top / window.innerHeight + markerRect.height / 2 / window.innerHeight;
+      });
+      
+      renderer.updateEventPositions(positions);
+      renderer.setTotalEvents(eventCount);
+    };
+    
+    // Scroll handler
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.min(scrollTop / docHeight, 1);
+      
+      // Update progress bar
+      progressBar.style.setProperty('--progress', `${scrollProgress * 100}%`);
+      progressText.textContent = `${Math.round(scrollProgress * 100)}%`;
+      
+      // Update renderer
+      renderer.updateScroll(scrollProgress);
+      
+      // Check visible events
+      const headerHeight = header.offsetHeight;
+      const viewportCenter = window.innerHeight / 2 + scrollTop;
+      
+      events.forEach((event, index) => {
+        const rect = event.getBoundingClientRect();
+        const elementTop = rect.top + scrollTop;
+        const elementCenter = elementTop + rect.height / 2;
+        
+        // Check if event is in viewport
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          event.classList.add('visible');
+          
+          // Calculate event progress based on proximity to viewport center
+          const distance = Math.abs(viewportCenter - elementCenter);
+          const maxDistance = window.innerHeight;
+          const progress = 1 - Math.min(distance / maxDistance, 1);
+          
+          if (progress > 0.5) {
+            renderer.updateActiveEvent(index, progress);
+            
+            // Scale marker based on progress
+            const marker = event.querySelector('.marker-core');
+            if (marker) {
+              const scale = 1 + progress * 0.3;
+              marker.style.transform = `scale(${scale})`;
+            }
+          } else {
+            // Reset scale when not active
+            const marker = event.querySelector('.marker-core');
+            if (marker) {
+              marker.style.transform = 'scale(1)';
+            }
+          }
+        }
+      });
+      
+      updateEventPositions();
+    };
+    
+    // Resize handler
+    const handleResize = () => {
+      renderer.resize();
+      updateEventPositions();
+    };
+    
+    // Initial setup
+    handleScroll();
+    
+    // Event listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    // Smooth scroll for header
+    header.addEventListener('click', () => {
+      const firstEvent = events[0];
+      if (firstEvent) {
+        firstEvent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+</script>
